@@ -126,10 +126,11 @@ if __name__ == '__main__':
 
 	#pour chaque fichier du répertoire, création d'un fichier texte du résumé dans le répertoire de stochage
 	for file in listFile:
-		pathFile= arg + file
-		txtFile = file.replace(".pdf",".txt")
-		pathTxt = pathResume + "/" + txtFile
-		with open(pathTxt, 'w') as sys.stdout:
-			print(getFileName(file))
-			print(getTitle(pathFile))
-			print(getAbstract(pathFile))
+		if ".pdf" in file:
+			pathFile= arg + file
+			txtFile = file.replace(".pdf",".txt")
+			pathTxt = pathResume + "/" + txtFile
+			with open(pathTxt, 'w') as sys.stdout:
+				print(getFileName(file))
+				print(getTitle(pathFile))
+				print(getAbstract(pathFile))
