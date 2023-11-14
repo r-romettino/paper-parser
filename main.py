@@ -4,12 +4,16 @@ import pdftotext
 from nltk.tag.stanford import StanfordNERTagger as NERTagger
 
 import os
+import subprocess
+import sys
+import shutil
 
 alpha = "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN"
 words = set(open("words.txt"))
 
-def getFileName():
-    return
+def getFileName(fileName):
+   name= fileName.replace(" ","_")
+   return name
 
 # fast solution with simple list of names
 # general solution for english names with nltk.tokenizer
@@ -103,4 +107,29 @@ def getAbstract(path: str):
     return abstract.strip()
 
 if __name__ == '__main__':
-    print("Ok")
+	#recupèration du nom du repertoire
+	arg = str(sys.argv[1:])
+	arg= arg.replace("[","")
+	arg= arg.replace("]","")
+	arg= arg.replace("'","")
+
+	#suppression du repertoire de stockage des résumés s'il existe
+	pathResume = arg + "/articles_resumes"
+	if  os.path.exists(pathResume):
+		shutil.rmtree(pathResume)
+
+	#liste des fichiers du répertoire
+	listFile= os.listdir(arg)
+
+	#création du répertoire de stockage
+	os.mkdir(pathResume)
+
+	#pour chaque fichier du répertoire, création d'un fichier texte du résumé dans le répertoire de stochage
+	for file in listFile:
+		pathFile= arg + file
+		txtFile = file.replace(".pdf",".txt")
+		pathTxt = pathResume + "/" + txtFile
+		with open(pathTxt, 'w') as sys.stdout:
+			print(getFileName(file))
+			print(getTitle(pathFile))
+			print(getAbstract(pathFile))
