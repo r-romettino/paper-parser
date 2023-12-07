@@ -3,9 +3,9 @@ import nltk
 import pdftotext
 from nltk.tag.stanford import StanfordNERTagger as NERTagger
 
-import os
 import subprocess
 import sys
+import os
 import shutil
 
 alpha = "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN"
@@ -52,7 +52,8 @@ def getTitle(path):
                 resultat = lines[0]
             resultat = resultat.strip()
             break
-    print("Title: " + resultat)
+    return(resultat)
+
 
 def getAbstract(path: str):
     abstract = ""
@@ -106,31 +107,50 @@ def getAbstract(path: str):
 
     return abstract.strip()
 
+def getAutors(path):
+    return
+    
+def getBiblio(path):
+    return
+    
 if __name__ == '__main__':
 	#recupèration du nom du repertoire
 	arg = str(sys.argv[1:])
 	arg= arg.replace("[","")
 	arg= arg.replace("]","")
 	arg= arg.replace("'","")
-
-	#suppression du repertoire de stockage des résumés s'il existe
+		
+	#liste des fichiers du répertoire
+	listFile= os.listdir(arg)
+	
+	#suppression du repertoire de stockage s'il existe
 	pathResume = arg + "/articles_resumes"
 	if  os.path.exists(pathResume):
 		shutil.rmtree(pathResume)
-
-	#liste des fichiers du répertoire
-	listFile= os.listdir(arg)
-
+		
 	#création du répertoire de stockage
 	os.mkdir(pathResume)
-
+	
 	#pour chaque fichier du répertoire, création d'un fichier texte du résumé dans le répertoire de stochage
 	for file in listFile:
 		if ".pdf" in file:
-			pathFile= arg + file
+			pathFile = arg +"/"+ file
 			txtFile = file.replace(".pdf",".txt")
 			pathTxt = pathResume + "/" + txtFile
+			xmlFile = file.replace(".pdf",".xml")
+			pathXml = pathResume + "/" + xmlFile
 			with open(pathTxt, 'w') as sys.stdout:
 				print(getFileName(file))
 				print(getTitle(pathFile))
+				print(getAutors(pathFile))
 				print(getAbstract(pathFile))
+				print(getBiblio(pathFile))
+				
+			with open(pathXml, 'w') as sys.stdout:
+				print("<article>")
+				print("		<preamble>",getFileName(file),"</preamble>")
+				print("		<titre>",getTitle(pathFile),"</titre>")
+				print("		<auteur>",getAutors(pathFile),"</auteur>")
+				print("		<abstract>",getAbstract(pathFile),"</abstract>")
+				print("		<biblio>",getAutors(pathFile),"</biblio>")
+				print("</article>")
