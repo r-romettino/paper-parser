@@ -106,6 +106,47 @@ def getAbstract(path: str):
 
     return abstract.strip()
 
+def getBiblio(path: str):
+    biblio = ""
+
+    os.system("pdftotext -raw " + path + " tmp")
+
+    f = open("tmp", "r")
+    corpus = f.readlines()
+    f.close()
+
+    os.remove("tmp")
+
+    biblioFound = False
+    for i in range(len(corpus)):
+        line = corpus[i].strip()
+
+        if len(line) == 0:
+            continue
+
+        if "references" in line.lower():
+            biblioFound = True
+            continue
+
+        if biblioFound and re.fullmatch(r'^[0-9]+$', line) == None:
+            biblio += line
+
+        if line[-1] != "-":
+            biblio += " "
+        else:
+            lastWordIndex = line.rfind(" ") + 1
+            lastWord = line[lastWordIndex:-1]
+
+            firstWordIndex = corpus[i+1].find(" ")
+            firstWord = corpus[i+1][:firstWordIndex]
+
+            completeWord = lastWord + firstWord + "\n"
+
+            if completeWord.lower() in words:
+                biblio = biblio.removesuffix("-")
+
+    return biblio.strip()
+
 if __name__ == '__main__':
 	#recupèration du nom du repertoire
 	arg = str(sys.argv[1:])
