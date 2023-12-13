@@ -53,8 +53,19 @@ def getAuthors(path):
     # only first page
     text = pdf[0]
 
-    if(len(text)>5000):
-        text = text[:1000]+text[-4000:]
+    indexFirstName = 1000
+    isAbtract = re.search(r"Abstract", text, re.I)
+    if isAbtract is None:
+        lines = text.splitlines()
+        indexAbstract = 0
+        for line in lines:
+            count = len(line)
+            if count>80:
+                break
+            indexAbstract += count + 1
+    else:
+        indexAbstract = isAbtract.start()
+    text = text[:indexAbstract]+"\n"+text[-1000:]
 
     dictNames = {}
     name_list = ["Minh", "Andrei", "Juan", "Daniel", "Bao", "Masaru", "Yi"]
@@ -75,6 +86,8 @@ def getAuthors(path):
     # full names
     for name in name_list:
         index1 = text.find(name)
+        if 0 < index1 < indexFirstName:
+            indexFirstName = index1
         if index1>=0:
             index2 = index1
             fullName = text[index1:index2].lower()
@@ -107,7 +120,11 @@ def getAuthors(path):
             mails.remove(dictNames[name])
 
     dictNames = {k: v for k, v in dictNames.items() if v}
-    return dictNames
+
+    AuthorsSection = text[indexFirstName:indexAbstract]
+    AuthorsSection = re.sub("\\\\|\[|]|∗|[ \t]{2,}", "", AuthorsSection)
+
+    return dictNames, AuthorsSection
 
 def getAbstract():
     return
