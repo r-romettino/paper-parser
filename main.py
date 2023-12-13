@@ -110,6 +110,164 @@ def getAbstract(path: str):
 def getAutors(path):
     return
     
+def getIntro(path):
+    return
+    
+def getCorps(path):
+    return
+    
+def getConclu(path: str):
+    conclu = ""
+
+    os.system("pdftotext -raw " + path + " tmp")
+
+    f = open("tmp", "r")
+    corpus = f.readlines()
+    f.close()
+
+    os.remove("tmp")
+
+    concluFound = False
+    for i in range(len(corpus)):
+        line = corpus[i].strip()
+
+        if len(line) == 0:
+            continue
+
+        if "Conclusion" in line:
+            concluFound = True
+
+            index = line.find("Conclusion") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    conclu += line[index:]
+                    break
+
+                index += 1
+                
+        if "Conclusions" in line:
+            concluFound = True
+
+            index = line.find("Conclusions") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    conclu += line[index:]
+                    break
+
+                index += 1
+                
+        if "CONCLUSION" in line:
+            concluFound = True
+
+            index = line.find("CONCLUSION") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    conclu += line[index:]
+                    break
+
+                index += 1
+                
+        if "CONCLUSIONS" in line:
+            concluFound = True
+
+            index = line.find("CONCLUSIONS") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    conclu += line[index:]
+                    break
+
+                index += 1
+
+        if line[0] == 1 or "discussion" in line.lower() or "acknowledgements" in line.lower() or "acknowledgement" in line.lower():
+            break
+
+        if concluFound and "Conclusion" not in line  and "Conclusions" not in line and "CONCLUSION" not in line and "CONCLUSIONS" not in line:
+            conclu += line
+
+        if line[-1] != "-":
+            conclu += " "
+        else:
+            lastWordIndex = line.rfind(" ") + 1
+            lastWord = line[lastWordIndex:-1]
+
+            firstWordIndex = corpus[i+1].find(" ")
+            firstWord = corpus[i+1][:firstWordIndex]
+
+            completeWord = lastWord + firstWord + "\n"
+
+            if completeWord.lower() in words:
+                conclu = conclu.removesuffix("-")
+
+    return conclu.strip()
+    
+def getDiscu(path):
+    discu = ""
+
+    os.system("pdftotext -raw " + path + " tmp")
+
+    f = open("tmp", "r")
+    corpus = f.readlines()
+    f.close()
+
+    os.remove("tmp")
+
+    discuFound = False
+    for i in range(len(corpus)):
+        line = corpus[i].strip()
+
+        if len(line) == 0:
+            continue
+
+        if "Discussion" in line:
+            discuFound = True
+
+            index = line.find("Discussion") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    discu += line[index:]
+                    break
+
+                index += 1
+                
+        if "DISCUSSION" in line:
+            discuFound = True
+
+            index = line.find("DISCUSSION") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    discu += line[index:]
+                    break
+
+                index += 1
+
+        if line[0] == 1 or "conclusions" in line.lower() or "conclusion" in line.lower() or "references" in line.lower()or "acknowledgements" in line.lower() or "acknowledgement" in line.lower():
+            break
+
+        if discuFound and "Discussion" not in line and "DISCUSSION" not in line:
+            discu += line
+
+        if line[-1] != "-":
+            discu += " "
+        else:
+            lastWordIndex = line.rfind(" ") + 1
+            lastWord = line[lastWordIndex:-1]
+
+            firstWordIndex = corpus[i+1].find(" ")
+            firstWord = corpus[i+1][:firstWordIndex]
+
+            completeWord = lastWord + firstWord + "\n"
+
+            if completeWord.lower() in words:
+                discu = discu.removesuffix("-")
+
+    return discu.strip()
+       
 def getBiblio(path):
     return
     
@@ -145,6 +303,10 @@ if __name__ == '__main__':
 					print(getTitle(pathFile))
 					print(getAutors(pathFile))
 					print(getAbstract(pathFile))
+					print(getIntro(pathFile))
+					print(getCorps(pathFile))
+					print(getConclu(pathFile))
+					print(getDiscu(pathFile))
 					print(getBiblio(pathFile))
 			
 			if(str(sys.argv[1])=="-x"):	
@@ -156,6 +318,10 @@ if __name__ == '__main__':
 					print("		<titre>",getTitle(pathFile),"</titre>")
 					print("		<auteur>",getAutors(pathFile),"</auteur>")
 					print("		<abstract>",getAbstract(pathFile),"</abstract>")
+					print("		<introduction>",getIntro(pathFile),"</introduction>")
+					print("		<corps>",getCorps(pathFile),"</corps>")
+					print("		<conclusion>",getConclu(pathFile),"</conclusion>")
+					print("		<discussion>",getDiscu(pathFile),"</discussion>")
 					print("		<biblio>",getAutors(pathFile),"</biblio>")
 					print("</article>")
 					
