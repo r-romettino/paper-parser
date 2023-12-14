@@ -3,9 +3,17 @@ import nltk
 import pdftotext
 from nltk.tag.stanford import StanfordNERTagger as NERTagger
 import re
+import os
+import subprocess
+import sys
+import shutil
 
-def getFileName():
-    return
+alpha = "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN"
+words = set(open("words.txt"))
+
+def getFileName(fileName):
+   name= fileName.replace(" ","_")
+   return name
 
 # fast solution with simple list of names
 # general solution for english names with nltk.tokenizer
@@ -126,8 +134,149 @@ def getAuthors(path):
 
     return dictNames, AuthorsSection
 
-def getAbstract():
-    return
+def getAbstract(path: str):
+    abstract = ""
 
+    os.system("pdftotext -raw " + path + " tmp")
+
+    f = open("tmp", "r")
+    corpus = f.readlines()
+    f.close()
+
+    os.remove("tmp")
+
+    abstractFound = False
+    for i in range(len(corpus)):
+        line = corpus[i].strip()
+
+        if len(line) == 0:
+            continue
+
+        if "abstract" in line.lower():
+            abstractFound = True
+
+            index = line.lower().find("abstract") + 8
+
+            while index < len(line):
+                if line[index] in alpha:
+                    abstract += line[index:]
+                    break
+
+                index += 1
+
+        if line[0] == 1 or "introduction" in line.lower():
+            break
+
+        if abstractFound and "abstract" not in line.lower():
+            abstract += line
+
+        if line[-1] != "-":
+            abstract += " "
+        else:
+            lastWordIndex = line.rfind(" ") + 1
+            lastWord = line[lastWordIndex:-1]
+
+            firstWordIndex = corpus[i+1].find(" ")
+            firstWord = corpus[i+1][:firstWordIndex]
+
+            completeWord = lastWord + firstWord + "\n"
+
+            if completeWord.lower() in words:
+                abstract = abstract.removesuffix("-")
+
+    return abstract.strip()
+
+def getTextOnePara(path):
+    with open(path, "rb") as f:
+        pdf = pdftotext.PDF(f)
+
+    isAbtract = re.search(r"Abstract", pdf[0], re.I)
+    if isAbtract is None:
+        lines = pdf[0].splitlines()
+        indexAbstract = 0
+        for line in lines:
+            count = len(line)
+            if count > 80:
+                break
+            indexAbstract += count + 1
+    else:
+        indexAbstract = isAbtract.start()
+
+    # create text of first 3 pages
+    text = ""
+    for i in range(3):
+        page = pdf[i]
+        if i == 0:
+            page = page[indexAbstract:]
+        lines1 = re.split("\n", page)
+        text1para1 = text1para2 = ' '
+        for line in lines1:
+            if line != ' ':
+                para = re.split(r"[ \t]{8,}", line)
+                if len(para) == 1:
+                    firstpara = re.split(r"[ \t]{8,}", line)[0]
+                    text1para1 = text1para1 + firstpara.strip() + '\n'
+                if len(para) == 2:
+                    firstpara = re.split(r"[ \t]{8,}", line)[0]
+                    text1para1 = text1para1 + firstpara.strip() + '\n'
+                    secondpara = re.split(r"[ \t]{8,}", line)[1]
+                    text1para2 = text1para2 + secondpara.strip() + '\n'
+                if len(para) > 2:
+                    firstpara = re.split(r"[ \t]{8,}", line)[1]
+                    text1para1 = text1para1 + firstpara.strip() + '\n'
+                    secondpara = re.split(r"[ \t]{8,}", line)[2]
+                    text1para2 = text1para2 + secondpara.strip() + '\n'
+        text1para1 = re.sub(r"\n+", '\n', text1para1)
+        text1para2 = re.sub(r"\n+", '\n', text1para2)
+        text1 = text1para1 + ' ' + text1para2
+        text = text + '\n' + text1
+
+    return text
+  
+  
+def getIntro(path):
+
+    text = getTextOnePara(path)
+
+    indexIntro = re.search(r"Introduction|1[.]*[ \t]+[NTRODUCIntroduci]+[ \t]*", text, re.I)
+    if indexIntro is None:
+        indexIntro = re.search(r"Introduction|I[.]*[ \t]+[NTRODUCIntroduci]+", text, re.I).start()
+        indexSecondPara = indexIntro + re.search(r"\n[ \t]*II[.]*[ \t]+", text[indexIntro:], re.I).start()
+    else:
+        indexIntro = re.search(r"Introduction|1[.]*[ \t]+[NTRODUCIntroduci]+[ \t]*", text, re.I).start()
+        indexSecondPara = indexIntro + re.search(r"\n[ \t]*2[.]*[ \t]+", text[indexIntro:], re.I).start()
+
+    Intro = text[indexIntro:indexSecondPara]
+    Intro = re.sub("\\\\|\[|]|∗|[ \t]{2,}", " ", Intro)
+
+    return Intro
+
+  
 if __name__ == '__main__':
-    print("Ok")
+	#recupèration du nom du repertoire
+	arg = str(sys.argv[1:])
+	arg= arg.replace("[","")
+	arg= arg.replace("]","")
+	arg= arg.replace("'","")
+
+	#suppression du repertoire de stockage des résumés s'il existe
+	pathResume = arg + "/articles_resumes"
+	if  os.path.exists(pathResume):
+		shutil.rmtree(pathResume)
+
+	#liste des fichiers du répertoire
+	listFile= os.listdir(arg)
+
+	#création du répertoire de stockage
+	os.mkdir(pathResume)
+
+	#pour chaque fichier du répertoire, création d'un fichier texte du résumé dans le répertoire de stochage
+	for file in listFile:
+		if ".pdf" in file:
+			pathFile= arg + file
+			txtFile = file.replace(".pdf",".txt")
+			pathTxt = pathResume + "/" + txtFile
+			with open(pathTxt, 'w') as sys.stdout:
+				print(getFileName(file))
+				print(getTitle(pathFile))
+				print(getAbstract(pathFile))
