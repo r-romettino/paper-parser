@@ -11,9 +11,11 @@ import shutil
 alpha = "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN"
 words = set(open("words.txt"))
 
+
 def getFileName(fileName):
-   name= fileName.replace(" ","_")
-   return name
+    name = fileName.replace(" ", "_")
+    return name
+
 
 # fast solution with simple list of names
 # general solution for english names with nltk.tokenizer
@@ -25,7 +27,7 @@ def getTitle(path):
 
     resultat = ""
 
-    if(len(text)>300):
+    if len(text) > 300:
         text = text[:300]
 
     name_list = ["Minh", "Andrei", "Juan"]
@@ -43,9 +45,9 @@ def getTitle(path):
     for name in name_list:
         if re.search(name, text):
             index = min(index, re.search(name, text).start())
-    if index>=0:
+    if index >= 0:
         lines = text[:index].split('\n')
-        if(len(lines)>1):
+        if len(lines) > 1:
             for i, line in enumerate(lines):
                 resultat += lines[i].strip() + " "
         else:
@@ -68,12 +70,12 @@ def getAuthors(path):
         indexAbstract = 0
         for line in lines:
             count = len(line)
-            if count>80:
+            if count > 80:
                 break
             indexAbstract += count + 1
     else:
         indexAbstract = isAbtract.start()
-    text = text[:indexAbstract]+"\n"+text[-1000:]
+    text = text[:indexAbstract] + "\n" + text[-1000:]
 
     dictNames = {}
     name_list = ["Minh", "Andrei", "Juan", "Daniel", "Bao", "Masaru", "Yi"]
@@ -96,14 +98,15 @@ def getAuthors(path):
         index1 = text.find(name)
         if 0 < index1 < indexFirstName:
             indexFirstName = index1
-        if index1>=0:
+        if index1 >= 0:
             index2 = index1
             fullName = text[index1:index2].lower()
             while not re.search(r'[,\n\\]|∗| and|\s{2,}', fullName):
                 index2 = index2 + 1
                 fullName = text[index1:index2]
             foundName = re.sub(r'[0-9]| and|\\|∗|,|\n', ' ', fullName).strip()
-            if not (foundName in ' '.join(dictNames.keys())) and not any(name in foundName for name in dictNames.keys()):
+            if not (foundName in ' '.join(dictNames.keys())) and not any(
+                    name in foundName for name in dictNames.keys()):
                 dictNames[foundName] = None
 
     mails = re.findall(r'[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+', text)
@@ -119,8 +122,8 @@ def getAuthors(path):
         for k in range(1, 6):
             for mail in mails:
                 substring_list = [name[i: j].lower() for i in range(len(name))
-                                   for j in range(i + 1, len(name) + 1)
-                                   if len(name[i:j]) == k]
+                                  for j in range(i + 1, len(name) + 1)
+                                  if len(name[i:j]) == k]
                 if any(substring in mail.lower() for substring in substring_list):
                     dictNames[name] = mail
 
@@ -132,7 +135,8 @@ def getAuthors(path):
     AuthorsSection = text[indexFirstName:indexAbstract]
     AuthorsSection = re.sub("\\\\|\[|]|∗|[ \t]{2,}", "", AuthorsSection)
 
-    return dictNames, AuthorsSection
+    return AuthorsSection
+
 
 def getAbstract(path: str):
     abstract = ""
@@ -176,8 +180,8 @@ def getAbstract(path: str):
             lastWordIndex = line.rfind(" ") + 1
             lastWord = line[lastWordIndex:-1]
 
-            firstWordIndex = corpus[i+1].find(" ")
-            firstWord = corpus[i+1][:firstWordIndex]
+            firstWordIndex = corpus[i + 1].find(" ")
+            firstWord = corpus[i + 1][:firstWordIndex]
 
             completeWord = lastWord + firstWord + "\n"
 
@@ -185,6 +189,7 @@ def getAbstract(path: str):
                 abstract = abstract.removesuffix("-")
 
     return abstract.strip()
+
 
 def getTextOnePara(path):
     with open(path, "rb") as f:
@@ -232,51 +237,54 @@ def getTextOnePara(path):
         text = text + '\n' + text1
 
     return text
-  
-  
-def getIntro(path):
 
+
+def getIntro(path):
     text = getTextOnePara(path)
 
-    indexIntro = re.search(r"Introduction|1[.]*[ \t]+[NTRODUCIntroduci]+[ \t]*", text, re.I)
-    if indexIntro is None:
-        indexIntro = re.search(r"Introduction|I[.]*[ \t]+[NTRODUCIntroduci]+", text, re.I).start()
-        indexSecondPara = indexIntro + re.search(r"\n[ \t]*II[.]*[ \t]+", text[indexIntro:], re.I).start()
+    indexIntroSearch = re.search(r"\n(1|I)*[.]*[ \t]*[NTRODUCIntroduci ]{12,}[ \t]*", text, re.I)
+    if indexIntroSearch is None:
+        indexIntro = 1000
     else:
-        indexIntro = re.search(r"Introduction|1[.]*[ \t]+[NTRODUCIntroduci]+[ \t]*", text, re.I).start()
-        indexSecondPara = indexIntro + re.search(r"\n[ \t]*2[.]*[ \t]+", text[indexIntro:], re.I).start()
+        indexIntro = indexIntroSearch.start()
 
-    Intro = text[indexIntro:indexSecondPara]
-    Intro = re.sub("\\\\|\[|]|∗|[ \t]{2,}", " ", Intro)
+    indexSecondSearch = re.search(r"\n[ \t]*(2|II)[ .a-zA-Z]", text[indexIntro:], re.I)
+    if indexSecondSearch is None:
+        indexSecond = indexIntro + 1000
+    else:
+        indexSecond = indexIntro + indexSecondSearch.start()
+
+    Intro = text[indexIntro:indexSecond]
+    Intro = re.sub("\\\\|[|]|∗|[ \t]{2,}", " ", Intro)
 
     return Intro
 
-  
+
 if __name__ == '__main__':
-	#recupèration du nom du repertoire
-	arg = str(sys.argv[1:])
-	arg= arg.replace("[","")
-	arg= arg.replace("]","")
-	arg= arg.replace("'","")
+    # recupèration du nom du repertoire
+    arg = str(sys.argv[1:])
+    arg = arg.replace("[", "")
+    arg = arg.replace("]", "")
+    arg = arg.replace("'", "")
 
-	#suppression du repertoire de stockage des résumés s'il existe
-	pathResume = arg + "/articles_resumes"
-	if  os.path.exists(pathResume):
-		shutil.rmtree(pathResume)
+    # suppression du repertoire de stockage des résumés s'il existe
+    pathResume = arg + "/articles_resumes"
+    if os.path.exists(pathResume):
+        shutil.rmtree(pathResume)
 
-	#liste des fichiers du répertoire
-	listFile= os.listdir(arg)
+    # liste des fichiers du répertoire
+    listFile = os.listdir(arg)
 
-	#création du répertoire de stockage
-	os.mkdir(pathResume)
+    # création du répertoire de stockage
+    os.mkdir(pathResume)
 
-	#pour chaque fichier du répertoire, création d'un fichier texte du résumé dans le répertoire de stochage
-	for file in listFile:
-		if ".pdf" in file:
-			pathFile= arg + file
-			txtFile = file.replace(".pdf",".txt")
-			pathTxt = pathResume + "/" + txtFile
-			with open(pathTxt, 'w') as sys.stdout:
-				print(getFileName(file))
-				print(getTitle(pathFile))
-				print(getAbstract(pathFile))
+    # pour chaque fichier du répertoire, création d'un fichier texte du résumé dans le répertoire de stochage
+    for file in listFile:
+        if ".pdf" in file:
+            pathFile = arg + file
+            txtFile = file.replace(".pdf", ".txt")
+            pathTxt = pathResume + "/" + txtFile
+            with open(pathTxt, 'w') as sys.stdout:
+                print(getFileName(file))
+                print(getTitle(pathFile))
+                print(getAbstract(pathFile))
