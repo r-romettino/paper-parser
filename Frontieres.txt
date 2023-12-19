@@ -1,0 +1,516 @@
+------------référence:----------------
+
+Nom de fichier:
+	A Benders Decomposition Approach toCorrelation Clustering
+	
+Titre:
+	A Benders Decomposition Approach to
+	Correlation Clustering
+
+Auteurs:
+	Margret Keuper
+	University of Mannheim
+	...
+	Jersey City, New Jersey, USA
+	julian.yarkony@verisk.com
+
+Abstract:
+	Abstract
+	We tackle the problem
+	...
+	for massive parallelization.
+
+Introduction:
+
+	1
+
+	Introduction
+
+	Many computer vision
+	...
+	CC such as in Andres et al. [1].
+	
+Corps:
+	2
+
+	Related Work
+
+	Correlation clustering
+	...
+	greater importance than parallelization.
+	
+Conclusion:
+	7
+
+	Conclusions
+
+	We present a novel
+	...
+	of the master problem.
+	
+Discussion: -
+Biblio:
+	References
+	[1] B. Andres,
+	...
+	bright field
+	microscopy. In ISBI, 2014.
+
+-------------------------------------
+
+Nom de fichier:
+	A_memetic_algorithm_for_community_detectionin_signed_networks
+	
+Titre:
+	A memetic algorithm for community detection
+	in signed networks
+
+Auteurs:
+	Shiwei Che1, Wu Yang1, and Wei Wang1
+	...
+	Wu Yang (e-mail: yangwu@hrbeu.edu.cn).
+
+Abstract:
+	ABSTRACT Community discovery
+	...
+	(i.e. community detection).
+	
+Introduction:
+	I.
+
+	INTRODUCTION
+	...
+	summarizes the whole paper.
+	
+Corps:
+	II.
+
+	RELATED WORKS
+	...
+	include a large number of positive edges.
+	
+Conclusion:
+	CONCLUSIONS
+
+	In the research field of
+	...
+	problem in our future work.
+	
+Discussion:-
+Biblio:
+	REFERENCES
+	[1]
+	...
+	and community detection.
+
+--------------------------------
+
+Nom de fichier:
+	An_Improved_Branch-and-Cut_Code_for_the_Maximum_Balanced_Subgraph_of_a_Signed_Graph
+	
+Titre:
+	An improved Branch-and-cut code for the maximum
+	balanced subgraph of a signed graph
+
+Auteurs:
+	Rosa Figueiredoa,∗
+	...
+	yuri@ic.uff.br
+
+Abstract:
+	Abstract
+	The Maximum Balanced
+	...
+	set of random instances.
+	
+Introduction:
+	1. Introduction
+	Let G = (V, E) be an undirected
+	...
+	have always opposite signs.
+	
+Corps:
+	2. Integer programming formulation and branch-and-cut
+	...
+	10.38
+	0
+	518.06(48)
+	4.85
+	675.26
+	
+Conclusion:-
+Discussion:-
+Biblio:
+	References
+	[1] P. Abell and M. Ludwig.
+	...
+	Electronic Journal of Combinatorics DS8, 1998.
+	
+-------------------------------
+
+Nom de fichier:
+	Cabrera_RESUMES_2019
+	
+Titre:
+	Ranking résumés automatically using only résumés: A method free of
+	job offers
+
+Auteurs:
+	Luis Adrián Cabrera-Diego
+	...
+	Paris 75011, France
+
+Abstract:
+	a b s t r a c t
+	With the success of the electronic
+	...
+	systems analyze and rank résumés.
+	
+Introduction:
+	1. Introduction
+	For at least 15 years, the process
+	...
+	presented in
+	Section 8.
+	
+Corps:
+	2. Related work
+	2
+	According to Thompson
+	...
+	values of Cohen’s d effect size.
+	
+Discussion:
+	7. Discussion
+
+	and MIRP. This ﬁnding means
+	...
+	n-grams used in the vector
+	model.
+	
+Conclusion:
+	8. Conclusions and future work
+	The massive access of the Internet
+	...
+	new and deeper research in this domain.
+	
+Biblio:
+	References
+	Armstrong, M., & Taylor, S. (2014)
+	...
+	International Publishing. doi:10.1007/978- 3- 319- 59421- 7_10.
+	
+---------------------------
+
+Nom de fichier:
+	Conversational_Networks_for_Automatic_Online_Moderation
+	
+Titre:
+	Conversational Networks for Automatic
+	Online Moderation
+
+Auteurs:
+	Etienne Papegnies , Vincent Labatut , Richard Dufour, and Georges Linarès
+
+Abstract:
+	Abstract— Moderation of user-generated content in an online
+	...
+	Social computing, Text analysis.
+	
+Introduction:
+	I. I NTRODUCTION
+
+	O
+
+	NLINE co
+	...
+	present some perspectives for this paper.
+	
+Corps:
+	II. R ELATED W ORK
+	In this section, we first review general approaches related to
+	...
+	considering at all the content of the exchanged messages.
+	
+Discussion:-
+Conclusion:
+	V. C ONCLUSION
+	In this paper, we tackle
+	...
+	have presented more relevant.
+	
+Biblio:
+	R EFERENCES
+	[1] French Republic. (2004).
+	...
+	Germany: Springer, 2017, pp. 391–404.
+	
+--------------------------------
+
+Nom de fichier:
+	Dynamical_Models_Explaining_Socia_Balance_and_Evolution_of_Cooperation
+	
+Titre:
+	Dynamical Models Explaining Social Balance and
+	Evolution of Cooperation
+
+Auteurs:
+	Vincent Antonio Traag1*,
+	...
+	Florida, United States of America
+
+Abstract:
+	Abstract
+	Social networks with positive
+	...
+	behaviour, unlike the previous model.
+	
+Introduction:
+	Introduction
+	Why do two antagonistic factions emerge so frequently in social
+	...
+	In contrast, we
+	
+Corps:
+	Earlier Model
+	Certain discrete-time,
+	...
+	formation and cooperation, and as such contributes to the study
+	of indirect reciprocity.
+	
+Discussion:-
+Conclusion:
+	Conclusion
+
+	Materials and Methods
+
+	To conclude,
+	...
+	Figure S3 Results different intensities of selection.
+	
+Biblio:
+	References
+	25. Hamilton W (1964)
+	...
+	Cambridge: Cambridge University Press, 226 pp.
+	
+--------------------------------
+
+Nom de fichier:
+	Exact_Clustering_via_Integer_Programming_and_Maximum_Satisfiability
+	
+Titre:
+	Exact Clustering via Integer Programming
+	and Maximum Satisﬁability
+
+Auteurs:
+	Atsushi Miyauchi,1 Tomohiro
+	...
+	sukegawa.15k@g.chuo-u.ac.jp
+
+Abstract:
+	Abstract
+	We consider the following general graph clustering problem
+	...
+	both memory efﬁciency and computation time.
+	
+Introduction:
+	1
+
+	Introduction
+
+	Clustering is a fundamental tool
+	...
+	of exact formulation for WCC and thus for CPP.
+	
+Corps:
+	1.1
+
+	Our Contribution
+
+	In this study, we further
+	...
+	G31
+	G32
+	G33
+	G34
+	G35
+	
+Discussion:-
+Conclusion:
+	Conclusion
+
+	In this study, we have investigated
+	...
+	computation time.
+	
+Biblio:
+	References
+	Agarwal, G., and Kempe,
+	...
+	Computer-Integrated Manufacturing. Prentice Hall Press.
+	
+--------------------------------------
+
+Nom de fichier:
+	LDA_resume
+	
+Titre:
+	Automatic Summarization Approaches
+	to Speed up Topic Model Learning Process
+
+Auteurs:
+	Mohamed Morchid1 , Juan-Manuel Torres-Moreno1,2,3 
+	...
+	jararo@azc.uam.mx
+
+Abstract:
+	Abstract. The number of documents available
+	...
+	or latin languages.
+	
+Introduction:
+	1
+
+	Introduction
+
+	The number of documents available
+	...
+	in Section 5. A discussion is finally proposed in Section 6 before concluding
+	in Section 7.
+	
+Corps:
+	2
+
+	Related work
+
+	Several methods were proposed by
+	...
+	Fig. 6. Perplexity (×10−3 ) by varying the % summary for each corpus.
+
+	6
+	
+Discussion:
+	Discussions
+
+	The results reported in Figures 5
+	...
+	fast learning process, the BF method should be chosen.
+	
+Conclusion:
+	7
+
+	Conclusions
+
+	In this paper, a qualitative study of the impact
+	...
+	for the size of the corpus whatever the language considered.
+	
+Biblio:
+	References
+	1. Salton, G.: Automatic text
+	...
+	http://mallet.cs.umass.edu (2002)
+	
+---------------------------------
+
+Nom de fichier:
+	Partitioning_large_signed_two-mode_networks:_Problems_and_prospects
+	
+Titre:
+	Partitioning large signed two-mode networks: Problems and prospects
+
+Auteurs:
+	Patrick Doreian a,b,∗ ,
+	...
+	Bloomington, IN 47405, USA
+
+Abstract:
+	a b s t r a c t
+	While a substantial amount of attention
+	...
+	international relations on soft balancing of power processes.
+	
+Introduction:
+	1. Introduction
+	While a substantial amount of attention within social network
+	...
+	blockmodeling approaches to signed data.
+	
+Corps:
+	2. Applying structural balance theory to international
+	relations data
+	...
+	challenges to a state or an alliances’ military power by constraining
+	its use, e.g., through promotion of norms that prohibit the possession or use of particular weaponry.
+	
+Discussion:
+	8. Discussion
+	During the analyses that led
+	...
+	been operationalized in a speciﬁc and substantive driven way.
+	
+Conclusion:-
+Biblio:
+	References
+	Art, R.J., 2005/2006. Correspondence:
+	...
+	http://vlado.fmf.uni-lj.si/pub/networks/Doc/Sunbelt/islands.pdf.
+	
+-----------------------------------------
+
+Nom de fichier:
+	Polibits_42_02
+	
+Titre:
+	Summary Evaluation
+	with and without References
+
+Auteurs:
+	Juan-Manuel Torres-Moreno, Horacio Saggion, Iria da Cunha, Eric SanJuan, and Patricia Velázquez-Morales
+
+Abstract:
+	Abstract—We study a new content-based method for
+	...
+	generic single-document summarization in French and Spanish.
+	
+Introduction:
+	I. I NTRODUCTION
+
+	T
+
+	EXT summarization evaluation has always been a
+	...
+	results and Section VI concludes the paper and identifies future
+	work.
+	
+Corps:
+	II. R ELATED W ORK
+	One of the first works to use content-based measures in
+	...
+	be expected given the diversity of input in multi-document
+	summarization.
+	
+Discussion:
+	V. D ISCUSSION
+	The departing point for our inquiry into text summarization
+	...
+	ROUGE -2
+	0.660
+	0.590
+	0.520
+	0.640
+	
+Conclusion:-
+Biblio:
+	R EFERENCES
+	[1] I. Mani, G. Klein,
+	...
+	AAAI Press; MIT Press; 1999, 2000, pp. 703–710.
+
+
+
+
+
+
+

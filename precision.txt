@@ -1,0 +1,75 @@
+
+précision sera calculée comme suit :
+Précision = Sections_correctes_trouvées_par_le_système / Sections_trouvées_par_le_système
+
+------------précision:----------------
+
+Nom de fichier: A Benders Decomposition Approach toCorrelation Clustering
+
+trouvées:
+correctes:
+précision:
+-------------------------------------
+
+Nom de fichier: A_memetic_algorithm_for_community_detectionin_signed_networks
+
+trouvées:
+correctes:
+précision:
+--------------------------------
+
+Nom de fichier: An_Improved_Branch-and-Cut_Code_for_the_Maximum_Balanced_Subgraph_of_a_Signed_Graph
+
+trouvées:
+correctes:
+précision:	
+-------------------------------
+
+Nom de fichier: Cabrera_RESUMES_2019
+
+trouvées:
+correctes:
+précision:	
+---------------------------
+
+Nom de fichier: Conversational_Networks_for_Automatic_Online_Moderation
+
+trouvées:
+correctes:
+précision:
+--------------------------------
+
+Nom de fichier: Dynamical_Models_Explaining_Socia_Balance_and_Evolution_of_Cooperation
+
+trouvées:
+correctes:
+précision:	
+--------------------------------
+
+Nom de fichier: Exact_Clustering_via_Integer_Programming_and_Maximum_Satisfiability
+
+trouvées:
+correctes:
+précision:	
+--------------------------------------
+
+Nom de fichier: LDA_resume
+
+trouvées:
+correctes:
+précision:	
+---------------------------------
+
+Nom de fichier: Partitioning_large_signed_two-mode_networks:_Problems_and_prospects
+
+trouvées:
+correctes:
+précision:	
+-----------------------------------------
+
+Nom de fichier: Polibits_42_02
+
+trouvées:
+correctes:
+précision:
+
