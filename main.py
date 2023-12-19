@@ -13,9 +13,11 @@ num = "0123456789"
 numRom = "IVX"
 words = set(open("words.txt"))
 
+
 def getFileName(fileName):
-   name= fileName.replace(" ","_")
-   return name
+    name = fileName.replace(" ", "_")
+    return name
+
 
 # fast solution with simple list of names
 # general solution for english names with nltk.tokenizer
@@ -27,12 +29,11 @@ def getTitle(path):
 
     resultat = ""
 
-    if(len(text)>300):
+    if len(text) > 300:
         text = text[:300]
 
-    name_list = ["Minh", "Florian", "David", "James", "Vincent", "Kevin", "Andrei", "Andreas", "Juan"]
+    name_list = ["Minh", "Andrei", "Juan"]
 
-    """
     # Solution works for any english name, but requires files english.all.3class.distsim.crf.ser.gz and stanford-ner.jar
     st = NERTagger('stanford-ner/english.all.3class.distsim.crf.ser.gz', 'stanford-ner/stanford-ner.jar')
 
@@ -41,20 +42,102 @@ def getTitle(path):
         tags = st.tag(tokens)
         for tag in tags:
             if tag[1] == 'PERSON': name_list.append(tag[0])
-    """
 
+    index = 500
     for name in name_list:
-        index = text.find(name)
-        if index>=0:
-            lines = text[:index].split('\n')
-            if(len(lines)>1):
-                for i, line in enumerate(lines):
-                    resultat += lines[i].strip() + " "
-            else:
-                resultat = lines[0]
-            resultat = resultat.strip()
-            break
-    return(resultat)
+        if re.search(name, text):
+            index = min(index, re.search(name, text).start())
+    if index >= 0:
+        lines = text[:index].split('\n')
+        if len(lines) > 1:
+            for i, line in enumerate(lines):
+                resultat += lines[i].strip() + " "
+        else:
+            resultat = lines[0]
+        resultat = resultat.strip()
+
+    return resultat
+
+
+def getAuthors(path):
+    with open(path, "rb") as f:
+        pdf = pdftotext.PDF(f)
+    # only first page
+    text = pdf[0]
+
+    indexFirstName = 1000
+    isAbtract = re.search(r"Abstract", text, re.I)
+    if isAbtract is None:
+        lines = text.splitlines()
+        indexAbstract = 0
+        for line in lines:
+            count = len(line)
+            if count > 80:
+                break
+            indexAbstract += count + 1
+    else:
+        indexAbstract = isAbtract.start()
+    text = text[:indexAbstract] + "\n" + text[-1000:]
+
+    dictNames = {}
+    name_list = ["Minh", "Andrei", "Juan", "Daniel", "Bao", "Masaru", "Yi"]
+
+    # Solution works for any english name, but requires files english.all.3class.distsim.crf.ser.gz and stanford-ner.jar
+    st = NERTagger('stanford-ner/english.all.3class.distsim.crf.ser.gz', 'stanford-ner/stanford-ner.jar')
+
+    for sent in nltk.sent_tokenize(text):
+        tokens = nltk.tokenize.word_tokenize(sent)
+        tags = st.tag(tokens)
+        for tag in tags:
+            if tag[1] == 'PERSON': name_list.append(tag[0])
+
+    # automatically found names
+    for i, name in enumerate(name_list):
+        name_list[i] = ''.join([i for i in name if not (i.lower()).isdigit()])
+
+    # full names
+    for name in name_list:
+        index1 = text.find(name)
+        if 0 < index1 < indexFirstName:
+            indexFirstName = index1
+        if index1 >= 0:
+            index2 = index1
+            fullName = text[index1:index2].lower()
+            while not re.search(r'[,\n\\]|∗| and|\s{2,}', fullName):
+                index2 = index2 + 1
+                fullName = text[index1:index2]
+            foundName = re.sub(r'[0-9]| and|\\|∗|,|\n', ' ', fullName).strip()
+            if not (foundName in ' '.join(dictNames.keys())) and not any(
+                    name in foundName for name in dictNames.keys()):
+                dictNames[foundName] = None
+
+    mails = re.findall(r'[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+', text)
+    mailsWithList = re.findall(r'{[ a-zA-Z0-9.,-]+}@[a-zA-Z0-9.-]+', text)
+    if mailsWithList:
+        for mail in mailsWithList:
+            subStrings = re.split(r'[{}]', mail)
+            names = subStrings[1].split(',')
+            for name in names:
+                mails.append(name.strip() + subStrings[2])
+
+    for name in dictNames:
+        for k in range(1, 6):
+            for mail in mails:
+                substring_list = [name[i: j].lower() for i in range(len(name))
+                                  for j in range(i + 1, len(name) + 1)
+                                  if len(name[i:j]) == k]
+                if any(substring in mail.lower() for substring in substring_list):
+                    dictNames[name] = mail
+
+        if dictNames[name] is not None:
+            mails.remove(dictNames[name])
+
+    dictNames = {k: v for k, v in dictNames.items() if v}
+
+    AuthorsSection = text[indexFirstName:indexAbstract]
+    AuthorsSection = re.sub("\\\\|\[|]|∗|[ \t]{2,}", "", AuthorsSection)
+
+    return AuthorsSection
 
 
 def getAbstract(path: str):
@@ -99,8 +182,8 @@ def getAbstract(path: str):
             lastWordIndex = line.rfind(" ") + 1
             lastWord = line[lastWordIndex:-1]
 
-            firstWordIndex = corpus[i+1].find(" ")
-            firstWord = corpus[i+1][:firstWordIndex]
+            firstWordIndex = corpus[i + 1].find(" ")
+            firstWord = corpus[i + 1][:firstWordIndex]
 
             completeWord = lastWord + firstWord + "\n"
 
@@ -109,85 +192,6 @@ def getAbstract(path: str):
 
     return abstract.strip()
 
-def getAutors(path):
-      with open(path, "rb") as f:
-        pdf = pdftotext.PDF(f)
-      # only first page
-      text = pdf[0]
-
-      indexFirstName = 1000
-      isAbtract = re.search(r"Abstract", text, re.I)
-      if isAbtract is None:
-        lines = text.splitlines()
-        indexAbstract = 0
-        for line in lines:
-            count = len(line)
-            if count>80:
-                break
-            indexAbstract += count + 1
-      else:
-        indexAbstract = isAbtract.start()
-      text = text[:indexAbstract]+"\n"+text[-1000:]
-
-      dictNames = {}
-      name_list = ["Minh", "Andrei", "Juan", "Daniel", "Bao", "Masaru", "Yi"]
-
-      # Solution works for any english name, but requires files english.all.3class.distsim.crf.ser.gz and stanford-ner.jar
-      st = NERTagger('stanford-ner/english.all.3class.distsim.crf.ser.gz', 'stanford-ner/stanford-ner.jar')
-
-      for sent in nltk.sent_tokenize(text):
-        tokens = nltk.tokenize.word_tokenize(sent)
-        tags = st.tag(tokens)
-        for tag in tags:
-            if tag[1] == 'PERSON': name_list.append(tag[0])
-
-      # automatically found names
-      for i, name in enumerate(name_list):
-        name_list[i] = ''.join([i for i in name if not (i.lower()).isdigit()])
-
-      # full names
-      for name in name_list:
-        index1 = text.find(name)
-        if 0 < index1 < indexFirstName:
-            indexFirstName = index1
-        if index1>=0:
-            index2 = index1
-            fullName = text[index1:index2].lower()
-            while not re.search(r'[,\n\\]|∗| and|\s{2,}', fullName):
-                index2 = index2 + 1
-                fullName = text[index1:index2]
-            foundName = re.sub(r'[0-9]| and|\\|∗|,|\n', ' ', fullName).strip()
-            if not (foundName in ' '.join(dictNames.keys())) and not any(name in foundName for name in dictNames.keys()):
-                dictNames[foundName] = None
-
-      mails = re.findall(r'[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+', text)
-      mailsWithList = re.findall(r'{[ a-zA-Z0-9.,-]+}@[a-zA-Z0-9.-]+', text)
-      if mailsWithList:
-        for mail in mailsWithList:
-            subStrings = re.split(r'[{}]', mail)
-            names = subStrings[1].split(',')
-            for name in names:
-                mails.append(name.strip() + subStrings[2])
-
-      for name in dictNames:
-        for k in range(1, 6):
-            for mail in mails:
-                substring_list = [name[i: j].lower() for i in range(len(name))
-                                   for j in range(i + 1, len(name) + 1)
-                                   if len(name[i:j]) == k]
-                if any(substring in mail.lower() for substring in substring_list):
-                    dictNames[name] = mail
-
-        if dictNames[name] is not None:
-            mails.remove(dictNames[name])
-
-      dictNames = {k: v for k, v in dictNames.items() if v}
-
-      AuthorsSection = text[indexFirstName:indexAbstract]
-      AuthorsSection = re.sub("\\\\|\[|]|∗|[ \t]{2,}", "", AuthorsSection)
-
-      return dictNames, AuthorsSection
-    
 def getTextOnePara(path):
     with open(path, "rb") as f:
         pdf = pdftotext.PDF(f)
@@ -234,28 +238,34 @@ def getTextOnePara(path):
         text = text + '\n' + text1
 
     return text
-  
-  
-def getIntro(path):
 
+  
+  
+ def getIntro(path):
     text = getTextOnePara(path)
 
-    indexIntro = re.search(r"Introduction|1[.]*[ \t]+[NTRODUCIntroduci]+[ \t]*", text, re.I)
-    if indexIntro is None:
-        indexIntro = re.search(r"Introduction|I[.]*[ \t]+[NTRODUCIntroduci]+", text, re.I).start()
-        indexSecondPara = indexIntro + re.search(r"\n[ \t]*II[.]*[ \t]+", text[indexIntro:], re.I).start()
+    indexIntroSearch = re.search(r"\n(1|I)*[.]*[ \t]*[NTRODUCIntroduci ]{12,}[ \t]*", text, re.I)
+    if indexIntroSearch is None:
+        indexIntro = 1000
     else:
-        indexIntro = re.search(r"Introduction|1[.]*[ \t]+[NTRODUCIntroduci]+[ \t]*", text, re.I).start()
-        indexSecondPara = indexIntro + re.search(r"\n[ \t]*[.]*[ \t]+", text[indexIntro:], re.I).start()
+        indexIntro = indexIntroSearch.start()
 
-    Intro = text[indexIntro:indexSecondPara]
-    Intro = re.sub("\\\\|\[|]|∗|[ \t]{2,}", " ", Intro)
+    indexSecondSearch = re.search(r"\n[ \t]*(2|II)[ .a-zA-Z]", text[indexIntro:], re.I)
+    if indexSecondSearch is None:
+        indexSecond = indexIntro + 1000
+    else:
+        indexSecond = indexIntro + indexSecondSearch.start()
+
+    Intro = text[indexIntro:indexSecond]
+    Intro = re.sub("\\\\|[|]|∗|[ \t]{2,}", " ", Intro)
 
     return Intro
-    
+ 
+
 def getCorps(path):
     return("")
-    
+
+  
 def getConclu(path):
     conclu = ""
 
@@ -508,3 +518,4 @@ if __name__ == '__main__':
 							print("		<discussion>",getDiscu(pathFile),"</discussion>")
 							print("		<biblio>",getAutors(pathFile),"</biblio>")
 							print("</article>")				
+
