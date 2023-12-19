@@ -9,6 +9,8 @@ import sys
 import shutil
 
 alpha = "azertyuiopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN"
+num = "0123456789"
+numRom = "IVX"
 words = set(open("words.txt"))
 
 
@@ -190,7 +192,6 @@ def getAbstract(path: str):
 
     return abstract.strip()
 
-
 def getTextOnePara(path):
     with open(path, "rb") as f:
         pdf = pdftotext.PDF(f)
@@ -238,8 +239,9 @@ def getTextOnePara(path):
 
     return text
 
-
-def getIntro(path):
+  
+  
+ def getIntro(path):
     text = getTextOnePara(path)
 
     indexIntroSearch = re.search(r"\n(1|I)*[.]*[ \t]*[NTRODUCIntroduci ]{12,}[ \t]*", text, re.I)
@@ -258,33 +260,262 @@ def getIntro(path):
     Intro = re.sub("\\\\|[|]|∗|[ \t]{2,}", " ", Intro)
 
     return Intro
+ 
 
+def getCorps(path):
+    return("")
 
+  
+def getConclu(path):
+    conclu = ""
+
+    os.system("pdftotext -raw " + path + " tmp")
+
+    f = open("tmp", "r")
+    corpus = f.readlines()
+    f.close()
+
+    os.remove("tmp")
+
+    concluFound = False
+    for i in range(len(corpus)):
+        line = corpus[i].strip()
+
+        if len(line) == 0:
+            continue
+
+        if "onclusion" in line:
+            concluFound = True
+
+            index = line.find("onclusion") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    conclu += line[index:]
+                    break
+
+                index += 1
+                
+        if "onclusions" in line:
+            concluFound = True
+
+            index = line.find("onclusions") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    conclu += line[index:]
+                    break
+
+                index += 1
+                
+        if "ONCLUSION" in line:
+            concluFound = True
+
+            index = line.find("ONCLUSION") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    conclu += line[index:]
+                    break
+
+                index += 1
+                
+        if "ONCLUSIONS" in line:
+            concluFound = True
+
+            index = line.find("ONCLUSIONS") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    conclu += line[index:]
+                    break
+
+                index += 1
+	
+        if line[0] == 1 or "discussion" in line.lower() or "discussions" in line.lower() or "references" in line.lower() or "acknowledgements" in line.lower() or "acknowledgement" in line.lower():
+            break
+
+        if concluFound and "Conclusion" not in line and "Conclusions" not in line and "CONCLUSION" not in line and "CONCLUSIONS" not in line:
+            conclu += line
+
+        if line[-1] != "-":
+            conclu += " "
+        else:
+            lastWordIndex = line.rfind(" ") + 1
+            lastWord = line[lastWordIndex:-1]
+
+            firstWordIndex = corpus[i+1].find(" ")
+            firstWord = corpus[i+1][:firstWordIndex]
+
+            completeWord = lastWord + firstWord + "\n"
+
+            if completeWord.lower() in words:
+                conclu = conclu.removesuffix("-")
+                
+    return conclu.strip()
+
+def getDiscu(path):
+    discu = ""
+
+    os.system("pdftotext -raw " + path + " tmp")
+
+    f = open("tmp", "r")
+    corpus = f.readlines()
+    f.close()
+
+    os.remove("tmp")
+
+    discuFound = False
+    for i in range(len(corpus)):
+        line = corpus[i].strip()
+
+        if len(line) == 0:
+            continue
+
+        if "Discussion" in line and line.find("Discussion")<20:
+            discuFound = True
+
+            index = line.find("DISCUSSION") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    discu += line[index:]
+                    break
+
+                index += 1
+                
+        if "DISCUSSION" in line and line.find("Discussion")<20:
+            discuFound = True
+
+            index = line.find("DISCUSSION") + len(line)
+
+            while index < len(line):
+                if line[index] in alpha:
+                    discu += line[index:]
+                    break
+
+                index += 1
+
+        if line[0] == 1 or "conclusions" in line.lower() or "conclusion" in line.lower() or "references" in line.lower()or "acknowledgements" in line.lower() or "acknowledgement" in line.lower():
+            break
+
+        if discuFound and "Discussion" not in line and "DISCUSSION" not in line:
+            discu += line
+
+        if line[-1] != "-":
+            discu += " "
+        else:
+            lastWordIndex = line.rfind(" ") + 1
+            lastWord = line[lastWordIndex:-1]
+
+            firstWordIndex = corpus[i+1].find(" ")
+            firstWord = corpus[i+1][:firstWordIndex]
+
+            completeWord = lastWord + firstWord + "\n"
+
+            if completeWord.lower() in words:
+                discu = discu.removesuffix("-")
+
+    return discu.strip()
+       
+def getBiblio(path):
+     biblio = ""
+
+     os.system("pdftotext -raw " + path + " tmp")
+
+     f = open("tmp", "r")
+     corpus = f.readlines()
+     f.close()
+
+     os.remove("tmp")
+
+     biblioFound = False
+     for i in range(len(corpus)):
+        line = corpus[i].strip()
+
+        if len(line) == 0:
+            continue
+
+        if "references" in line.lower():
+            biblioFound = True
+            continue
+
+        if biblioFound and re.fullmatch(r'^[0-9]+$', line) == None:
+            biblio += line
+
+        if line[-1] != "-":
+            biblio += " "
+        else:
+            lastWordIndex = line.rfind(" ") + 1
+            lastWord = line[lastWordIndex:-1]
+
+            firstWordIndex = corpus[i+1].find(" ")
+            firstWord = corpus[i+1][:firstWordIndex]
+
+            completeWord = lastWord + firstWord + "\n"
+
+            if completeWord.lower() in words:
+                biblio = biblio.removesuffix("-")
+
+     return biblio.strip()
+    
 if __name__ == '__main__':
-    # recupèration du nom du repertoire
-    arg = str(sys.argv[1:])
-    arg = arg.replace("[", "")
-    arg = arg.replace("]", "")
-    arg = arg.replace("'", "")
+	
+	if len(sys.argv) == 1:
+		print("La fonction doit s'appeler avec -t ou -x en argument pour avoir soit un fichier texte soit un fichier")
+	else:
+		print("Menu:")
+		print("1 Tout le répertoire")
+		print("2 PDF spécifiques")
+		choix = input("Entrer votre choix: ")
+		
+		if choix == "1":
+			
+			rep =input("Entrer les chemins du repertoir: ")
+			#liste des fichiers du répertoire
+			listFile = os.listdir(rep)
+			
+		elif choix == "2":
+			#liste des fichiers à traiter
+			listFile = input("Entrer les chemins de vos fichier: ")
+		
+		if choix == "1" or choix == "2":
+			pathResume = sys.argv[2]
+			#pour chaque fichier du répertoire, création d'un fichier texte du résumé dans le répertoire de stochage
+			for file in listFile:
+				if ".pdf" in file:
+					if choix == "1":
+						pathFile = rep +"/"+ file
+					elif choix == "2":
+						pathFile =file
+					
+					if(str(sys.argv[1])=="-t"):
+						txtFile = file.replace(".pdf",".txt")
+						pathTxt = pathResume + "/" + txtFile
+						with open(pathTxt, 'w') as sys.stdout:
+							print(getFileName(file))
+							print(getTitle(pathFile))
+							print(getAutors(pathFile))
+							print(getAbstract(pathFile))
+							print(getIntro(pathFile))
+							print(getCorps(pathFile))
+							print(getConclu(pathFile))
+							print(getDiscu(pathFile))
+							print(getBiblio(pathFile))
+					
+					if(str(sys.argv[1])=="-x"):	
+						xmlFile = file.replace(".pdf",".xml")
+						pathXml = pathResume + "/" + xmlFile
+						with open(pathXml, 'w') as sys.stdout:
+							print("<article>")
+							print("		<preamble>",getFileName(file),"</preamble>")
+							print("		<titre>",getTitle(pathFile),"</titre>")
+							print("		<auteur>",getAutors(pathFile),"</auteur>")
+							print("		<abstract>",getAbstract(pathFile),"</abstract>")
+							print("		<introduction>",getIntro(pathFile),"</introduction>")
+							print("		<corps>",getCorps(pathFile),"</corps>")
+							print("		<conclusion>",getConclu(pathFile),"</conclusion>")
+							print("		<discussion>",getDiscu(pathFile),"</discussion>")
+							print("		<biblio>",getAutors(pathFile),"</biblio>")
+							print("</article>")				
 
-    # suppression du repertoire de stockage des résumés s'il existe
-    pathResume = arg + "/articles_resumes"
-    if os.path.exists(pathResume):
-        shutil.rmtree(pathResume)
-
-    # liste des fichiers du répertoire
-    listFile = os.listdir(arg)
-
-    # création du répertoire de stockage
-    os.mkdir(pathResume)
-
-    # pour chaque fichier du répertoire, création d'un fichier texte du résumé dans le répertoire de stochage
-    for file in listFile:
-        if ".pdf" in file:
-            pathFile = arg + file
-            txtFile = file.replace(".pdf", ".txt")
-            pathTxt = pathResume + "/" + txtFile
-            with open(pathTxt, 'w') as sys.stdout:
-                print(getFileName(file))
-                print(getTitle(pathFile))
-                print(getAbstract(pathFile))
