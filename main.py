@@ -192,6 +192,7 @@ def getAbstract(path: str):
 
     return abstract.strip()
 
+
 def getTextOnePara(path):
     with open(path, "rb") as f:
         pdf = pdftotext.PDF(f)
@@ -354,9 +355,10 @@ def getConclu(path):
                 
     return conclu.strip()
 
+  
 def getDiscu(path):
     discu = ""
-
+    
     os.system("pdftotext -raw " + path + " tmp")
 
     f = open("tmp", "r")
@@ -417,8 +419,8 @@ def getDiscu(path):
                 discu = discu.removesuffix("-")
 
     return discu.strip()
-       
-def getBiblio(path):
+ 
+def getBiblio(path: str):
      biblio = ""
 
      os.system("pdftotext -raw " + path + " tmp")
@@ -456,9 +458,9 @@ def getBiblio(path):
 
             if completeWord.lower() in words:
                 biblio = biblio.removesuffix("-")
+    return biblio.strip()
 
-     return biblio.strip()
-    
+  
 if __name__ == '__main__':
 	
 	if len(sys.argv) == 1:
